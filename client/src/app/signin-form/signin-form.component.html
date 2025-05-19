@@ -1,0 +1,17 @@
+<div>
+    <h1>Sign In</h1>
+    <form [formGroup]="form" class="sign-form">
+
+        <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input type="text" matInput formControlName="username" /> 
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>password</mat-label>
+            <input type="password" matInput formControlName="password" /> 
+        </mat-form-field>
+
+        <button mat-flat-button type="submit">Sign in</button>
+    </form>
+</div>

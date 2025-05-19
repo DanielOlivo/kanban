@@ -1,0 +1,28 @@
+.board-container {
+    padding: 10px 6px;
+    margin: 0px;
+    overflow-x: auto;
+    overflow-y: auto;
+
+    height: calc(100% - 60px);
+}
+
+.overflow-content {
+}
+
+.board-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: start;
+    gap: 20px;
+}
+
+.add-note-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 5px;
+}

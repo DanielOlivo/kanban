@@ -1,0 +1,22 @@
+<div
+    (dblclick)="setEditable()"
+    (contextmenu)="openMenu($event, note)"
+>
+    <textarea 
+        class="note-textarea"
+        [style]="style"
+        [(ngModel)]="note.title"
+        [disabled]="!onEdit"
+        (blur)="applyChanges()" 
+    ></textarea>
+
+    <note-menu 
+        *ngIf="menuOpen"
+        [x]="menuX"
+        [y]="menuY"
+        [note]="note"
+        (close)="menuOpen=false"
+        (delete)="onDelete()"
+    ></note-menu>
+
+</div>

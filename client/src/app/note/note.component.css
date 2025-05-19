@@ -1,0 +1,19 @@
+.note-textarea {
+    border: 1px solid black;
+    border-radius: 10px;
+
+    width: 100%;
+
+    min-height: 30px;
+    max-height: 60px;
+
+    padding: 8px;
+
+    background-color: white;
+    color: black;
+}
+
+.note-textarea:disabled {
+    background-color: white;
+    color: black;
+}

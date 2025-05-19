@@ -1,0 +1,9 @@
+packages:
+  - client
+ignoredBuiltDependencies:
+  - '@compodoc/compodoc'
+  - '@parcel/watcher'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - lmdb
+  - msgpackr-extract

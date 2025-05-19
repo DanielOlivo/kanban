@@ -1,0 +1,13 @@
+<div class="flex justify-center items-center">
+     
+    <mat-list class="">
+        @for(board of boards; track board){
+            <mat-list-item>
+                <a [routerLink]="['/board', board.id]" >
+                    {{board.name}}: {{board.decks.length}} cards
+                </a>
+            </mat-list-item>
+        }
+    </mat-list>
+
+</div>

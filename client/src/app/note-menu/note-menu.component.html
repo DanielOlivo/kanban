@@ -1,0 +1,15 @@
+<div
+    class="menu"
+    [ngStyle]="{'position': 'absolute', 'top': y, 'left': x}"
+    (mouseleave)="close.emit()"
+>
+    <mat-card appearance="outlined">
+        <mat-card-content>
+            <mat-list role="list">
+                <mat-list-item role="listitem">
+                    <button mat-button (click)="delete.emit()" >Delete</button>
+                </mat-list-item>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+</div>
