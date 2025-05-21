@@ -1,5 +1,6 @@
 packages:
   - client
+  - server
 ignoredBuiltDependencies:
   - '@compodoc/compodoc'
   - '@parcel/watcher'

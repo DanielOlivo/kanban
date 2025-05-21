@@ -8,36 +8,17 @@
             cdkDropListOrientation="horizontal"
         >
             @for(deck of board.decks; track deck){
-                <mat-card 
-                    appearance="outlined"
+                <div 
                     cdkDrag
                     [cdkDragData]="deck"
                     style="min-width: 200px; margin-right: 1pem;"
                 >
-                    <mat-card-content>
-                        <p>{{deck.title}}</p>
-                        <div
-                            cdkDropList 
-                            [id]="deck.id"
-                            [cdkDropListData]="deck.notes"
-                            [cdkDropListConnectedTo]="connectedDropLists(deck.id)"
-                            (cdkDropListDropped)="onDrop($event)"
-                        >
-                            @for(note of deck.notes; track note){
-                                <note 
-                                    [note]="note" 
-                                    cdkDrag 
-                                    (delete)="handleDelete($event)"
-                                />
-                            }
-                        </div>
-                        <div class="add-note-container">
-                            <button mat-stroked-button
-                                (click)="addNewNote(deck)"  
-                            >Add note</button>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
+                    <deck 
+                        [deck]="deck" 
+                        [onDrop]="onDrop" 
+                        [connectedDropLists]="connectedDropLists(deck.id)"
+                    />
+                </div>
             }
         </div>
     </div>

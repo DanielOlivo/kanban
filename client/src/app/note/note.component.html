@@ -3,6 +3,7 @@
     (contextmenu)="openMenu($event, note)"
 >
     <textarea 
+        #noteTextArea
         class="note-textarea"
         [style]="style"
         [(ngModel)]="note.title"

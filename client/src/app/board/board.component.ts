@@ -2,10 +2,12 @@ import { Board } from '../board';
 import { Deck } from '../deck';
 import { Note } from '../note';
 import { StateService } from '../state.service';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, ViewChildren, QueryList, ElementRef } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { DeckComponent } from '../deck/deck.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card'
-import { NoteComponent } from '../note/note.component';
+import { RouterModule} from '@angular/router';
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -16,7 +18,7 @@ import {
 
 @Component({
   selector: 'board',
-  imports: [CdkDropList, CdkDrag, MatCardModule, NoteComponent, MatButtonModule ],
+  imports: [DeckComponent, CdkDropList, CdkDrag, MatCardModule, MatButtonModule, RouterModule],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
 })
@@ -63,9 +65,11 @@ export class BoardComponent {
         event.currentIndex
       )
     }
+    this.service.updateCurrentBoard()
   }
 
   onDeckDrop(event: CdkDragDrop<Deck[]>){
     moveItemInArray(this.board!.decks, event.previousIndex, event.currentIndex)
+    this.service.updateCurrentBoard()
   }
 }

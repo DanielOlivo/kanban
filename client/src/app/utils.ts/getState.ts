@@ -13,7 +13,7 @@ export const getCard = (): Note => ({
 
 export const getDeck = (): Deck => ({
   id: uuid(),
-  title: faker.lorem.word(),
+  name: faker.lorem.word(),
   notes: Array.from({length: 5}, getCard)
 })
 

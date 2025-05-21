@@ -7,7 +7,7 @@ import { StateService } from '../state.service';
 
 @Component({
   selector: 'board-header',
-  imports: [MatIconModule, MatButtonModule, MatToolbarModule],
+  imports: [MatIconModule, MatButtonModule, MatToolbarModule, MatToolbarModule],
   templateUrl: './board-header.component.html',
   styleUrl: './board-header.component.css'
 })

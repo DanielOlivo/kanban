@@ -8,11 +8,12 @@ const config: StorybookConfig = {
   "addons": [
     "@storybook/addon-essentials",
     "@storybook/addon-onboarding",
-    "@storybook/addon-interactions"
+    "@storybook/addon-interactions",
   ],
   "framework": {
     "name": "@storybook/angular",
     "options": {}
-  }
+  },
+  "staticDirs": ['../public' ]
 };
 export default config;

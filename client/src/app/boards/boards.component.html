@@ -1,13 +1,38 @@
-<div class="flex justify-center items-center">
-     
-    <mat-list class="">
-        @for(board of boards; track board){
-            <mat-list-item>
-                <a [routerLink]="['/board', board.id]" >
-                    {{board.name}}: {{board.decks.length}} cards
-                </a>
-            </mat-list-item>
-        }
-    </mat-list>
+<div class="flex flex-col w-full min-h-screen">
+    <mat-toolbar>
+        <div class="flex flex-row justify-between items-center">
+            <div>
+                <button mat-icon-button (click)="drawer.toggle()">
+                    <mat-icon>menu</mat-icon>
+                </button>
+            </div>
+            <span>{{ username }}</span>
+        </div>         
+    </mat-toolbar>
 
+    <div>
+        <mat-drawer-container autosize>
+            <mat-drawer #drawer >
+                <div class="flex flex-col justify-start items-center">
+                    <button mat-button>some content</button>
+                    <button mat-button>Logout</button>
+                </div>
+            </mat-drawer>
+
+            <div class="flex justify-center items-center">
+                <mat-list style="width: 60%;">
+                    <!-- @for(board of boards; track board){ -->
+                    @for(item of boardList; track item){
+                        <mat-list-item class="border-1 border-slate-300 rounded-md hover:bg-slate-200">
+                            <a class='w-full' [routerLink]="'/board/' + item.id">
+                                {{item.name}}
+                            </a>
+                        </mat-list-item>
+                    }
+                </mat-list>
+            </div>
+
+        </mat-drawer-container>
+
+    </div>
 </div>

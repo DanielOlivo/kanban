@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Note } from '../note';
+import type { Note } from '../note';
 import { NoteMenuComponent } from '../note-menu/note-menu.component';
 
 @Component({

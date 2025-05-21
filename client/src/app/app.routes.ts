@@ -18,7 +18,8 @@ export const routes: Routes = [
     },
     { 
         path: '', 
-        redirectTo: 'signin', 
+        // redirectTo: 'signin', 
+        redirectTo: 'boards',  // temp
         pathMatch: 'full' 
     },
     // { 

@@ -1,25 +1,30 @@
-<mat-card>
-    <mat-card-content>
-        <p>{{deck.title}}</p>
-        <div
-            cdkDropList 
-            [id]="deck.id"
-            [cdkDropListData]="deck.notes"
-            [cdkDropListConnectedTo]="connectedDropLists(deck.id)"
-            (cdkDropListDropped)="onDrop($event)"
-        >
-            @for(note of deck.notes; track note){
-                <note 
-                    [note]="note" 
-                    cdkDrag 
-                    (delete)="handleDelete($event)"
-                />
-            }
-        </div>
-        <div class="add-note-container">
-            <button mat-stroked-button
-                (click)="addNewNote()"  
-            >Add note</button>
-        </div>
-    </mat-card-content>
-</mat-card>
+<div class="min-width-[200px] mr-[1pem] p-2 border-black border-2">
+    <p class="w-full text-center font-medium">{{deck.name}}</p>
+    <div
+        class="min-h-32"
+        cdkDropList
+        [id]="deck.id"
+        [cdkDropListData]="deck.notes"
+        [cdkDropListConnectedTo]="connectedDropLists"
+        (cdkDropListDropped)="onNoteDrop($event)"
+    >
+        @for(note of deck.notes; track note){
+            <note 
+                [note]="note" 
+                cdkDrag 
+                (delete)="handleDelete($event)"
+            />
+        }
+    </div>
+    <div class="add-note-container">
+        <button mat-stroked-button
+            (click)="addNewNote()"  
+        >Add note</button>
+    </div>
+</div>
+
+        <!-- cdkDropList 
+        [id]="deck.id"
+        [cdkDropListData]="deck.notes"
+        [cdkDropListConnectedTo]="connectedDropLists(deck.id)"
+        (cdkDropListDropped)="onDrop($event)" -->

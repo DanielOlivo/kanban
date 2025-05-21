@@ -1,4 +1,30 @@
-<div>
-    <board-header />
-    <board />
+<div class='flex flex-col w-full min-h-screen'>
+    <!-- <board-header /> -->
+    <mat-toolbar>
+        <div class="w-full flex flex-row justify-between items-center">
+            <div class="flex flex-row justify-start items-center">
+                <button mat-icon-button (click)="drawer.toggle()">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <span>{{ board?.name || 'UNKNOWN BOARD' }}</span>
+            </div>
+
+            <span>{{username}}</span>
+        </div>
+    </mat-toolbar>
+
+    <div>
+        <mat-drawer-container autosize>
+            <mat-drawer #drawer class="flex flex-col justify-start items-center">
+                <div class="w-full flex flex-col items-center justify-start">
+                     <button mat-button [routerLink]="'/boards'">Boards2</button>
+                     <button mat-button (click)="logout()">Logout</button>
+                </div>
+            </mat-drawer>
+            <div>
+                <board />
+            </div>
+        </mat-drawer-container>
+    </div>
+
 </div>

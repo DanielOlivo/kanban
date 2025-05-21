@@ -5,3 +5,5 @@ export interface Board {
     name: string
     decks: Deck[]
 }
+
+export type BoardItem = Pick<Board, 'id' | 'name'>

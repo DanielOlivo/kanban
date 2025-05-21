@@ -7,6 +7,10 @@ const meta: Meta<DeckComponent> = {
   title: 'Kanban/Deck',
   component: DeckComponent,
   tags: ['autodocs'],
+
+  parameters: {
+    layout: 'centered'
+  }
 };
 
 export default meta;
@@ -14,10 +18,13 @@ type Story = StoryObj<DeckComponent>;
 
 const boards = [ getBoard() ]
 const deck = boards[0].decks[0]
+// console.log('DECK!!!', deck)
 
 export const Pirmary: Story = {
     args: {
-        deck
+        deck,
+        connectedDropLists: [],
+        onDrop: (event) => {},
     },
     decorators: [
         moduleMetadata({
@@ -26,6 +33,8 @@ export const Pirmary: Story = {
                     provide: StateService,
                     useValue: {
                         username: '',
+                        token: '',
+                        fetchOnStart: false,
                         boards,
                         currentBoard: boards[0]
                     }
