@@ -1,9 +1,19 @@
 <div>
-    <p class="text-red-500 text-3xl">sign-in-page</p>
-    <front-page-layout>
-        <signin-form></signin-form>
-    </front-page-layout>
-    <div>
-        <a href="signup">Don't have an account?</a>
-    </div>
+
+    <main class="flex flex-row justify-between items-center">
+
+        <div class="h-full w-[50%] flex flex-col justify-start items-center">
+            <signin-form></signin-form>
+            <div class="mt-4">
+                <a href="signup">Don't have an account?</a>
+            </div>
+        </div>
+
+        <div class="w-[50%] min-h-full flex flex-col justify-start items-start">
+            <h2>Kanban app</h2>
+            <p>This is simple kanban application </p>
+        </div>
+
+    </main>
+
 </div>

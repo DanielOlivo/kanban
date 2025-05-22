@@ -4,10 +4,15 @@ import { Deck } from './deck';
 import { Note } from './note';
 import { faker } from '@faker-js/faker';
 import { v4 as uuid } from 'uuid'
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import { environment } from '../environments/environment';
 
 const baseUrl = environment.apiUrl
+
+export type Credentials = {
+  username: string
+  password: string
+}
 
 export const getCard = (): Note => ({
   id: uuid(),
@@ -23,6 +28,7 @@ export const getDeck = (): Deck => ({
 
 export const getBoard = (): Board => ({
   id: uuid(),
+  ownerId: '',
   name: faker.lorem.word(),
   decks: Array.from({length: 4}, getDeck)
 })
@@ -38,6 +44,7 @@ export class StateService {
   token: string
 
   fetchOnStart: boolean
+  axiosInstance: AxiosInstance
 
   boards: Board[]
   currentBoard: Board | undefined
@@ -45,17 +52,33 @@ export class StateService {
   boardList: BoardItem[]
 
   constructor() {
-    // console.log('STATE CONSTRUCTOR')
-    this.fetchOnStart = true
-    this.username = faker.internet.username()
-    this.token = ''
-    this.boardList = []
-    // this.boards = Array.from({length: 2}, getBoard)
+    const username = localStorage.getItem('username')
+    const token = localStorage.getItem('token')
 
+    if(username && username.length > 0 && token && token.length > 0){
+      this.username = username
+      this.token = token
+      this.axiosInstance = axios.create({
+        baseURL: baseUrl,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }        
+      })
+    }
+    else {
+      this.username = ''
+      this.token = ''
+      this.axiosInstance = axios.create({
+        baseURL: baseUrl,
+      })
+    }
+
+
+    this.fetchOnStart = true
+    this.boardList = []
     this.boards = []
-    // if(this.fetchOnStart){
-    //   this.fetchBoards() 
-    // }
+
+
   }
 
   selectBoard(id: string){
@@ -87,25 +110,9 @@ export class StateService {
       this.currentBoard.decks = this.currentBoard?.decks.filter(d => d.id !== id)
   }
 
-  async fetchBoards(): Promise<void>{
-    try{
-      const url = new URL('/board', baseUrl).href
-      console.log('fetching boards from ', url)
-      const res = await axios.get(url)
-      // const boards: Board[] = res.data
-      console.log('fetched: ', res.data)
-      this.boards = res.data as Board[] 
-    }
-    catch(error){
-      if(error instanceof Error)
-        console.log('ERROR!: ', error.message)
-    }
-  }
-
   async fetchList(): Promise<void>{
     try{
-      const url = new URL('/board/names', baseUrl).href
-      const res = await axios.get(url)
+      const res = await this.axiosInstance.get('/board/names')
       this.boardList = res.data as BoardItem[]
       console.log('status', res.status, 'list fetched; ',this.boardList)
       console.log(Object.entries(this.boardList[0]))
@@ -118,9 +125,7 @@ export class StateService {
 
   async fetchBoard(id: string): Promise<void> {
     try {
-      const url = new URL(`/board/${id}`, baseUrl).href
-      console.log('fetching board with id ', id)
-      const res = await axios.get(url)
+      const res = await this.axiosInstance.get(`/board/${id}`)
       const board: Board = res.data
       console.log('board ', board)
       this.currentBoard = board
@@ -134,15 +139,36 @@ export class StateService {
 
   async updateCurrentBoard(): Promise<void> {
     try{
-      const url = new URL(`/board/${this.currentBoard?.id}`, baseUrl).href
-      console.log('updating board ', url)
-      const res = await axios.put(url, this.currentBoard)
+      const res = await this.axiosInstance.put(`/board/${this.currentBoard!.id}`, this.currentBoard)
       console.log('STATUS ',res.status)
     }
     catch (error){
       if(error instanceof Error){
         console.log('ERROR!', error.message)
       }
+    }
+  }
+
+  async signin(credentials: Credentials): Promise<void> {
+    try {
+      const res = await this.axiosInstance.post('/signin', credentials)
+
+      this.username = credentials.username
+      this.token = res.data.token
+
+      this.axiosInstance = axios.create({
+        baseURL: baseUrl,
+        headers: {
+          Authorization: `Bearer ${res.data.token}`
+        }
+      })
+
+      localStorage.setItem('username', this.username)
+      localStorage.setItem('token', this.token)
+    }
+    catch(error){
+      if(error instanceof Error)
+        console.log(error.message)
     }
   }
 }

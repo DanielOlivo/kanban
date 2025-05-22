@@ -92,6 +92,7 @@ const genDeck = (): Deck => ({
 
 const genBoard = (): Board => ({
     id: '00',
+    ownerId: '',
     name: faker.lorem.word(),
     decks: Array.from({length: 4}, genDeck)
 })

@@ -74,6 +74,7 @@ boardsRouter.put('/:id', async(req: Request, res: Response) => {
     const id = req?.params?.id
     try{
         const updated = req.body as Board
+        console.log('updating', updated)
         const { id: ownerId } = req.token
         const query = { 
             _id: new ObjectId( id ),

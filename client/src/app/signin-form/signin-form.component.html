@@ -1,6 +1,12 @@
-<div>
-    <h1>Sign In</h1>
-    <form [formGroup]="form" class="sign-form">
+<div class="flex flex-col justify-start items-center">
+
+    <h1 class="text-4xl font-semibold">Sign In</h1>
+
+    <form 
+        [formGroup]="form" 
+        class="flex flex-col justify-start mt-9"
+        (ngSubmit)="submit()"
+    >
 
         <mat-form-field>
             <mat-label>Username</mat-label>

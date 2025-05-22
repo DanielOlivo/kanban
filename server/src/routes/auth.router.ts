@@ -34,13 +34,14 @@ authRouter.post('/signup', async (req: Request, res: Response) => {
 })
 
 authRouter.post('/signin', async (req: Request, res: Response) => {
+    console.log('SIGNIN')
     try{
         const cred: Credentials = req.body
         const existing = await collections.users?.findOne(
             {username: cred.username}, 
             { projection: { password: 1, _id: 1} }
         ) 
-
+        console.log('existing: ', existing)
         if(!existing){
             res.status(500).send('failed')
             return
@@ -50,6 +51,7 @@ authRouter.post('/signin', async (req: Request, res: Response) => {
 
         const isValid = await validatePassword(cred.password, password)
 
+        console.log('isValid', isValid)
         if(!isValid){
             res.status(500).send('failed')
             return
@@ -71,7 +73,8 @@ authRouter.post('/signin', async (req: Request, res: Response) => {
 authRouter.delete('/', [authenticate],  async (req: Request, res: Response) => {
     // add token to black list
     try{
-        res.sendStatus(201)
+        res.redirect('/signin')
+        // res.sendStatus(201)
     }
     catch(error){
         res.status(500).send(error instanceof Error ? error.message : 'unknown')
