@@ -1,22 +1,24 @@
 import { describe, it, expect, afterAll } from '@jest/globals'
 import request from 'supertest'
 import express from 'express'
-import Board, { Deck } from '../models/board'
+import Board, { BoardItem, Deck } from '../models/board'
+import { authRouter } from './auth.router'
 import { boardsRouter } from './board.router'
-import { useClient } from '../services/database.service'
+import { collections, useClient } from '../services/database.service'
 import { seed } from '../services/seed'
 import { getBoard } from '../utils/getBoard'
 import { v4 as uuid } from 'uuid'
 import { faker } from '@faker-js/faker/.'
+import { authenticate } from '../middlewares/authenticate'
 
 
 describe('board router', () => {
     const app = express()
-    app.use('/board', boardsRouter)
+    app.use('/', authRouter)
+    app.use('/board', [authenticate], boardsRouter)
 
-    const mongoUrl = 'mongodb://localhost:27017'
-    const dbname = 'kanbandb'
     const { connect, close } = useClient()
+    let token: string
 
     let board: Board
 
@@ -30,16 +32,20 @@ describe('board router', () => {
         await seed()
     })
 
-    test('get all boards', async () => {
-        const res = await request(app).get('/board')
-        const boards = res.body as Board[]
-        expect(boards).toBeDefined()
-        expect( Array.isArray(boards) ).toBeTruthy()
-        expect( boards.length ).toEqual(2)
-    }) 
+    test('get token', async () => {
+        const cred = { username: 'user1', password: '1234'}
+        const res = await request(app)
+            .post('/signin')
+            .send(cred)
+        token = res.body.token
+        expect(token).toBeDefined()
+        expect(token.length > 0).toBeTruthy()
+    })
 
     test('get names', async() => {
-        const res = await request(app).get('/board/names')
+        const res = await request(app)
+            .get('/board/names')
+            .set('Authorization', `Bearer ${token}`)
         expect(res.statusCode).toEqual(200)
         const data = res.body
         expect( Array.isArray(data) ).toBeTruthy()
@@ -51,7 +57,10 @@ describe('board router', () => {
 
     test('create board', async () => {
         board = getBoard()
-        const res = await request(app).post('/board').send(board)
+        const res = await request(app)
+            .post('/board')
+            .send(board)
+            .set('Authorization', `Bearer ${token}`)
         expect(res.statusCode).toEqual(201)
 
         const { id } = res.body
@@ -60,18 +69,26 @@ describe('board router', () => {
     })  
 
     test('total amount of boards - 3', async () => {
-        const res = await request(app).get('/board')
-        const boards = res.body as Board[]
+        const res = await request(app)
+            .get('/board/names')
+            .set('Authorization', `Bearer ${token}`)
+        const boards = res.body
         expect(boards.length).toEqual(3)
     })
 
     test('get all and then one by one', async () => {
-        let res = await request(app).get('/board')
-        const ids = (res.body as Board[]).map(b => b.id)
+        let res = await request(app)
+            .get('/board/names')
+            .set('Authorization', `Bearer ${token}`)
+
+        const ids = (res.body as BoardItem[]).map(b => b.id)
         expect(ids.every(id => id !== undefined)).toBeTruthy()
 
         for(const id of ids){
-            res = await request(app).get(`/board/${id}`)
+            res = await request(app)
+                .get(`/board/${id}`)
+                .set('Authorization', `Bearer ${token}`)
+
             const b = res.body as Board
             expect(b).toBeDefined()
             expect(Object.keys(b).length > 0).toBeTruthy()
@@ -80,11 +97,14 @@ describe('board router', () => {
     })
 
     test('retrieve freshly created board', async () => {
-        const res = await request(app).get(`/board/${board.id}`)
+        const res = await request(app)
+            .get(`/board/${board.id}`)
+            .set('Authorization', `Bearer ${token}`)
         const b = res.body as Board
         expect(b).toBeDefined()
         // console.log("-============== b ", b)
         expect(['name', 'created', 'decks'].every(p => p in b)).toBeTruthy()
+        expect(b.id).not.toEqual(b.ownerId)
     })
 
     test('add deck to board', async () => {
@@ -99,13 +119,20 @@ describe('board router', () => {
         board.decks.push(deck)
         
         // update 
-        let res = await request(app).put('/board/' + board.id).send(board)
+        console.log('updating board with id', board.id)
+        const res1 = await request(app)
+            .put('/board/' + board.id).send(board)
+            .set('Authorization', `Bearer ${token}`)
 
-        expect(res.statusCode).toEqual(200)
+        expect(res1.statusCode).toEqual(200)
 
         // extract again
-        res = await request(app).get('/board/' + board.id)
-        const boardUpd = res.body
+        const res2 = await request(app)
+            .get('/board/' + board.id)
+            .set('Authorization', `Bearer ${token}`)
+        expect(res2.statusCode).toEqual(200)
+        const boardUpd = res2.body
+        console.log('boardUpd, ' + boardUpd)
         expect(boardUpd).toBeDefined()
         expect(boardUpd.decks.length).toEqual(5)
     })

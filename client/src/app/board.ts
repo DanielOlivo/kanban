@@ -2,6 +2,7 @@ import { Deck } from "./deck";
 
 export interface Board {
     id: string
+    ownerId: string
     name: string
     decks: Deck[]
 }

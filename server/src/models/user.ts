@@ -8,3 +8,5 @@ export default class User {
         public id?: ObjectId,
     ){}
 }
+
+export type Credentials = Pick<User, 'username' | 'password'>

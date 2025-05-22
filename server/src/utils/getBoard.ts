@@ -5,6 +5,7 @@ import Board from "../models/board";
 export function getBoard(decks: number = 4, notes: number = 6): Board {
     return {
         name: faker.lorem.word(),
+        ownerId: '',
         created: 0,
         decks: Array.from( {length: decks}, () => ({
             id: uuid(),

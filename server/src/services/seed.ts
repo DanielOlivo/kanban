@@ -1,8 +1,10 @@
-import {faker} from '@faker-js/faker'
+import { ObjectId } from 'mongodb'
 import { useClient } from './database.service'
 import User from '../models/user'
 import Board, { Deck, Note } from '../models/board'
 import {v4 as uuid} from 'uuid'
+import { createHash } from '../utils/hash'
+import { faker } from '@faker-js/faker/.'
 
 
 export async function seed(){
@@ -16,14 +18,20 @@ export async function seed(){
     await usersCollection.deleteMany({})
     await boardCollection.deleteMany({})
 
-    const users: User[] = Array.from({length: 5}, ()=> ({
-        username: faker.internet.username(),
-        password: faker.internet.password(),
+    const password = '1234'
+    const hashed = await createHash(password)
+
+    const user: User = {
+        username: 'user1',
+        password: hashed,
         created: 0     
-    }))
+    }
+
+    const { insertedId: ownerId } = await usersCollection.insertOne(user)
 
     const boards: Board[] = Array.from({length: 2}, (): Board => ({
         name: faker.lorem.word(),
+        ownerId: ownerId.toString(),
         created: 0,
         decks: Array.from({length: 4}, (): Deck => ({
             id: uuid(),
@@ -38,7 +46,6 @@ export async function seed(){
         }))
     }))
 
-    await usersCollection.insertMany(users)
     await boardCollection.insertMany(boards)
 
     await close()

@@ -17,10 +17,16 @@ export type Deck = {
 export default class Board {
 
     constructor(
+        public ownerId: string,
         public name: string,
         public decks: Deck[],
         public created: number,
         public id?: ObjectId
     ){}
 
+}
+
+export type BoardItem = {
+    id: string
+    name: string
 }

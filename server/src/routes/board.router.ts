@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import { collections } from '../services/database.service'
-import Board from '../models/board'
+import Board, { BoardItem } from '../models/board'
 
 export const boardsRouter = express.Router()
 boardsRouter.use(express.json())
@@ -10,38 +10,13 @@ function getError(err: any){
     return err instanceof Error ? err.message : 'unknown error'
 }
 
-boardsRouter.get('/', async (_req: Request, res: Response) => {
-    try {
-        const dbBoards = await collections!.boards!.find({}).toArray()
-        const boards: Board[] = dbBoards.map(doc => new Board(
-            doc.name,
-            doc.decks,
-            doc.created,
-            doc._id
-        ))
-        res.status(200).send(boards)
-    }
-    catch (error){
-        res.status(500).send(error instanceof Error ? error.message : 'unknown error')
-    }
-})
-
 boardsRouter.get('/names', async (req: Request, res: Response) => {
     try {
-        // const items = await collections.boards?.find({}, { projection: {
-        //     name: 1,
-        //     _id: 1
-        // }})?.toArray()
-        console.log('getting items...')
-        const items = await collections.boards?.aggregate([
-            {
-                $project: { 
-                    id: "$_id", 
-                    name: 1
-                }
-            }
-        ]).toArray()
-        console.log('...items: ', items)
+        const { id: ownerId } = req.token
+        const items = await collections.boards?.find(
+            { ownerId },
+            { projection: {  name: 1, id: "$_id", } }
+        ).toArray() 
         res.status(200).send(items)
     }
     catch(error){
@@ -51,8 +26,12 @@ boardsRouter.get('/names', async (req: Request, res: Response) => {
 
 boardsRouter.get('/:id', async (req: Request, res: Response) => {
     try {
+        const { id: ownerId } = req.token
         const id = req?.params?.id
-        const query = {_id: new ObjectId(id) }
+        const query = {
+            _id: new ObjectId(id),
+            ownerId
+        }
         const dbBoard = await collections.boards?.findOne( query )
 
         if(!dbBoard){
@@ -62,6 +41,7 @@ boardsRouter.get('/:id', async (req: Request, res: Response) => {
 
         const board: Board = {
             id: dbBoard._id,
+            ownerId: req.token.id,
             name: dbBoard.name,
             created: dbBoard.created,
             decks: dbBoard.decks
@@ -69,14 +49,16 @@ boardsRouter.get('/:id', async (req: Request, res: Response) => {
         res.status(200).send(board)
     }
     catch(error){
-
-        res.status(500).send(error instanceof Error ? error.message : 'unknown error')
+        const err = getError(error)
+        console.log(err)
+        res.status(500).send(err)
     }
 })
 
 boardsRouter.post('/', async (req: Request, res: Response) => {
     try{
         const newBoard = req.body as Board
+        newBoard.ownerId = req.token.id
         const result = await collections.boards?.insertOne(newBoard)
         if(result)
             res.status(201).json({ id: result.insertedId })
@@ -90,11 +72,16 @@ boardsRouter.post('/', async (req: Request, res: Response) => {
 
 boardsRouter.put('/:id', async(req: Request, res: Response) => {
     const id = req?.params?.id
-
     try{
         const updated = req.body as Board
-        const query = { _id: new ObjectId( id ) }
-        const result = await collections.boards?.updateOne( query, {$set: updated} )
+        const { id: ownerId } = req.token
+        const query = { 
+            _id: new ObjectId( id ),
+            ownerId
+        }
+        const result = await collections.boards?.updateOne( query, {$set: {
+            decks: updated.decks
+        }} )
         if(result)
             res.status(200).send('success')
         else
