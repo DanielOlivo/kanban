@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { Component, ElementRef, inject, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, inject, Input, QueryList, signal, ViewChild, ViewChildren } from '@angular/core';
 import { NoteComponent } from '../note/note.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
@@ -14,6 +14,8 @@ import {
 import type { Deck } from '../deck';
 import type { Note } from '../note';
 import { StateService } from '../state.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EditDeckDialogComponent } from '../edit-deck-dialog/edit-deck-dialog.component';
 
 @Component({
   selector: 'deck',
@@ -22,7 +24,7 @@ import { StateService } from '../state.service';
     MatMenuModule
   ],
   templateUrl: './deck.component.html',
-  styleUrl: './deck.component.css'
+  styleUrls: ['./deck.component.css']
 })
 
 export class DeckComponent {
@@ -76,4 +78,30 @@ export class DeckComponent {
     // console.log('DELETE ME') 
     this.service.removeDeck(this.deck)
   }
+
+  // rename dialog
+  // readonly deckName = signal(this.deck?.name || '')
+  readonly deckColor = signal('')
+  readonly dialog = inject(MatDialog)
+
+  openEditDialog(): void {
+    console.log('heeeey')
+
+    const dialogRef = this.dialog.open(EditDeckDialogComponent, {
+      // data: { name: this.deckName(), color: this.deckColor()}
+      data: { name: this.deck.name, color: this.deckColor()}
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        console.log('result', result)
+        if(result.name.length > 0){
+          this.deck.name = result.name
+          this.service.updateCurrentBoard()
+        }
+      }
+    })
+  }
+
+
 }

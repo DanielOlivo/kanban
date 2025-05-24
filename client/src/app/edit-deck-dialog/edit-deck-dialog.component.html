@@ -1,0 +1,22 @@
+<h2 class="p-3">Edit deck</h2>
+
+<mat-dialog-content>
+
+    <div class="flex flex-col justify-start items-start">
+        <mat-form-field>
+            <mat-label>Name: </mat-label>
+            <input matInput [(ngModel)]="name" />
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Color: </mat-label>
+            <input matInput [(ngModel)]="color" />
+        </mat-form-field>
+    </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Close</button>
+    <button mat-button (click)="onApply()">Apply</button>
+</mat-dialog-actions>

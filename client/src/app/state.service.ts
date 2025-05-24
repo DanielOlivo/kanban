@@ -6,6 +6,7 @@ import { faker } from '@faker-js/faker';
 import { v4 as uuid } from 'uuid'
 import axios, { AxiosInstance } from 'axios'
 import { environment } from '../environments/environment';
+import { Router, ActivatedRoute } from '@angular/router';
 
 const baseUrl = environment.apiUrl
 
@@ -51,7 +52,12 @@ export class StateService {
 
   boardList: BoardItem[]
 
-  constructor() {
+  private router: Router
+
+  constructor(router: Router) {
+
+    this.router = router
+
     let username = '' 
     let token = '' 
 
@@ -91,23 +97,6 @@ export class StateService {
     this.currentBoard = this.boards.find(b => b.id === id)
   } 
 
-
-  // removeNote(deck: Deck, id: string){
-  //   deck.notes = deck.notes.filter(n => n.id !== id) 
-  // }
-  
-  // addDeck(){
-  //   this.currentBoard?.decks.push({
-  //     id: uuid(),
-  //     name: 'new deck',
-  //     notes: []
-  //   })
-  // }
-
-  // removeDeck(id: string){
-  //   if(this.currentBoard)
-  //     this.currentBoard.decks = this.currentBoard?.decks.filter(d => d.id !== id)
-  // }
 
   async fetchList(): Promise<void>{
     try{
@@ -296,13 +285,21 @@ export class StateService {
   }
 
   async signout(){
+    console.log('signing out...')
     try{
-      const res = await this.axiosInstance.delete('/')
+      const res = await axios.delete('/',{
+        headers: { Authorization: `Bearer ${this.token}`}
+      })
 
       this.username = ''
       this.token = ''
 
-      localStorage.clear()
+      if(typeof window !== 'undefined'){
+        const myStorage = window.localStorage
+        myStorage.clear()
+      }
+
+      this.router.navigate(['/signin'])
     }
     catch(error){
       if(error instanceof Error)

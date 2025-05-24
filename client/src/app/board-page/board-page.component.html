@@ -1,4 +1,4 @@
-<div class='flex flex-col w-full min-h-screen'>
+<div class='flex flex-col w-full h-screen'>
     <!-- <board-header /> -->
     <mat-toolbar>
         <div class="w-full flex flex-row justify-between items-center">
@@ -13,16 +13,20 @@
         </div>
     </mat-toolbar>
 
-    <div>
-        <mat-drawer-container autosize>
+    <div class="flex-grow">
+        <mat-drawer-container>
+
             <mat-drawer #drawer class="flex flex-col justify-start items-center">
-                <div class="w-full flex flex-col items-center justify-start">
-                     <button mat-button [routerLink]="'/boards'">Boards2</button>
+                <div class="w-full h-full flex flex-col items-center justify-start">
+                     <button mat-button [routerLink]="'/boards'">Boards</button>
                      <button mat-button (click)="logout()">Logout</button>
                 </div>
             </mat-drawer>
-            <div>
-                <board />
+
+            <div class="w-full h-full">
+                <div class="overflow-auto">
+                    <board />
+                </div>
             </div>
         </mat-drawer-container>
     </div>

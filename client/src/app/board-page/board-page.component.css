@@ -1,0 +1,8 @@
+.mat-drawer-container {
+    height: 100%;
+    flex-grow: 1;
+}
+
+.mat-button {
+    width: 200px;
+}

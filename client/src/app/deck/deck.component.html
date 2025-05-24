@@ -1,5 +1,5 @@
 <div 
-    class="min-width-[200px] mr-[1pem] p-2 border-black border-2"
+    class="width-[200px] mr-[1pem] p-2 border-black border-2"
     (contextmenu)="onContextMenu($event)"
 >
 
@@ -37,12 +37,7 @@
 <mat-menu #contextMenu="matMenu">
     <ng-template matMenuContent>
         <p>DECK</p>
+        <button mat-menu-item (click)="openEditDialog()">Edit</button>
         <button mat-menu-item (click)="removeDeck()">Delete</button>
     </ng-template>
 </mat-menu>
-
-        <!-- cdkDropList 
-        [id]="deck.id"
-        [cdkDropListData]="deck.notes"
-        [cdkDropListConnectedTo]="connectedDropLists(deck.id)"
-        (cdkDropListDropped)="onDrop($event)" -->

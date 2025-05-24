@@ -1,4 +1,4 @@
-<div class="flex flex-col w-full min-h-screen">
+<div class="flex flex-col w-full h-screen">
     <mat-toolbar>
         <div class="flex flex-row justify-between items-center">
             <div>
@@ -10,16 +10,15 @@
         </div>         
     </mat-toolbar>
 
-    <div>
+    <div class="flex-grow">
         <mat-drawer-container autosize>
             <mat-drawer #drawer >
                 <div class="flex flex-col justify-start items-center">
-                    <button mat-button>some content</button>
                     <button mat-button (click)="this.state.signout()">Sign out</button>
                 </div>
             </mat-drawer>
 
-            <div class="flex justify-center items-center">
+            <div class="h-full w-full flex flex-col justify-center items-center">
                 <mat-list style="width: 60%;">
                     @for(item of boardList; track item){
                         <mat-list-item 
@@ -34,9 +33,12 @@
                             </a>
                         </mat-list-item>
                     }
-                    <button (click)="openCreateDialog()">Create board...</button>
+                    <button 
+                        class="mt-4"
+                        mat-button
+                        (click)="openCreateDialog()"
+                    >Create board...</button>
                 </mat-list>
-
 
             </div>
 
