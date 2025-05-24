@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, ViewChild } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import { StateService } from '../state.service';
@@ -7,7 +7,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+
+
 import { BoardItem } from '../board';
+import { CreateBoardDialogComponent } from '../create-board-dialog/create-board-dialog.component';
 
 @Component({
   selector: 'boards',
@@ -15,7 +27,8 @@ import { BoardItem } from '../board';
               MatButtonModule, MatIconModule, MatSidenavModule,
               MatMenuModule ],
   templateUrl: './boards.component.html',
-  styleUrl: './boards.component.css'
+  styleUrl: './boards.component.css',
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class BoardsComponent {
@@ -49,5 +62,27 @@ export class BoardsComponent {
   onDeleteClick(item: BoardItem){
     // console.log('to delete', item)
     this.state.removeBoard(item)
+  }
+
+  readonly boardName = signal('')
+  readonly dialog = inject(MatDialog)
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(CreateBoardDialogComponent, {
+      data: { name: this.boardName() }
+    })
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log("the dialog was closed")
+      if(result && result.length > 0){
+        this.boardName.set(result)
+        console.log('result', result)
+        this.state.createBoard(result)
+      }
+    })
+  }
+
+  createBoard(){
+    console.log('create board: ', this.boardName)
   }
 }

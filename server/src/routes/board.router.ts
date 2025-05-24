@@ -15,8 +15,9 @@ boardsRouter.get('/names', async (req: Request, res: Response) => {
         const { id: ownerId } = req.token
         const items = await collections.boards?.find(
             { ownerId },
-            { projection: {  name: 1, id: "$_id", } }
+            { projection: {  name: 1, id: "$_id", _id: 0 } }
         ).toArray() 
+        console.log('get items', items)
         res.status(200).send(items)
     }
     catch(error){
@@ -74,6 +75,12 @@ boardsRouter.put('/:id', async(req: Request, res: Response) => {
     const id = req?.params?.id
     try{
         const updated = req.body as Board
+        
+        if(!('decks' in updated)){
+            console.log('decks field is missing')
+            return
+        }
+
         console.log('updating', updated)
         const { id: ownerId } = req.token
         const query = { 

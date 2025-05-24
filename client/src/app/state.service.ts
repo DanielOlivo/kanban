@@ -91,37 +91,30 @@ export class StateService {
     this.currentBoard = this.boards.find(b => b.id === id)
   } 
 
-  addNote(deck: Deck){
-    deck.notes.push({
-      id: uuid(),
-      title: 'new note',
-      content: ''
-    })
-  }
 
-  removeNote(deck: Deck, id: string){
-    deck.notes = deck.notes.filter(n => n.id !== id) 
-  }
+  // removeNote(deck: Deck, id: string){
+  //   deck.notes = deck.notes.filter(n => n.id !== id) 
+  // }
   
-  addDeck(){
-    this.currentBoard?.decks.push({
-      id: uuid(),
-      name: 'new deck',
-      notes: []
-    })
-  }
+  // addDeck(){
+  //   this.currentBoard?.decks.push({
+  //     id: uuid(),
+  //     name: 'new deck',
+  //     notes: []
+  //   })
+  // }
 
-  removeDeck(id: string){
-    if(this.currentBoard)
-      this.currentBoard.decks = this.currentBoard?.decks.filter(d => d.id !== id)
-  }
+  // removeDeck(id: string){
+  //   if(this.currentBoard)
+  //     this.currentBoard.decks = this.currentBoard?.decks.filter(d => d.id !== id)
+  // }
 
   async fetchList(): Promise<void>{
     try{
       const res = await this.axiosInstance.get('/board/names')
       this.boardList = res.data as BoardItem[]
       console.log('status', res.status, 'list fetched; ',this.boardList)
-      console.log(Object.entries(this.boardList[0]))
+      // console.log(Object.entries(this.boardList[0]))
     }
     catch(error){
       if(error instanceof Error)
@@ -143,6 +136,26 @@ export class StateService {
     }
   }
 
+  async createBoard(name: string){
+    try {
+      const newBoard: Board = {
+        id: '',
+        ownerId: '',
+        name,
+        decks: []
+      }
+      const res = await this.axiosInstance.post('/board', newBoard)
+      const { id } = res.data
+
+      this.boardList.push({id, name})
+    }
+    catch(error){
+      if(error instanceof Error){
+        console.log(error.message)
+      }
+    }
+  }
+
   async removeBoard(item: BoardItem){
     try{
       console.log('requesting removal of ', item)
@@ -155,6 +168,93 @@ export class StateService {
         console.log(error)
     }
 
+  }
+
+  async createDeck(){
+    try{
+      if(!this.currentBoard){
+        return
+      }
+
+      const deck: Deck = {
+        id: uuid(),
+        name: 'deck',
+        notes: []
+      }
+
+      if(!this.currentBoard.decks || this.currentBoard.decks.length === 0){
+        const decks: Deck[] = [ deck ]
+        this.currentBoard.decks = decks
+      }
+      else {
+        this.currentBoard.decks.push(deck)
+      }
+
+
+      const res = await this.axiosInstance.put(`/board/${this.currentBoard.id}`, this.currentBoard)
+      console.log(res.status)
+    }
+    catch(error){
+      if(error instanceof Error){
+        console.log('ERROR', error.message)
+      }
+    }
+  }
+
+  async removeDeck(deck: Deck){
+    try{
+      if(!this.currentBoard){
+        return
+      }
+      this.currentBoard.decks = this.currentBoard.decks.filter(d => d.id !== deck.id)
+
+      const res = await this.axiosInstance.put(`/board/${this.currentBoard.id}`, this.currentBoard)
+    }
+    catch(error){
+      if(error instanceof Error){
+        console.log('Error!!!', error.message)
+      }
+    }
+  }
+
+  async addNote(deck: Deck){
+    try{
+      const note: Note = {
+        id: uuid(),
+        title: 'new note',
+        content: ''
+      }
+
+      deck.notes.push(note)
+
+      console.log('added note', this.currentBoard)
+      await this.updateCurrentBoard() 
+      
+    }
+    catch(error){
+      if(error instanceof Error){
+        console.log(error.message)
+      }
+    }
+  }
+
+  async removeNote(note: Note){
+    try{
+      if(!this.currentBoard){
+        return
+      }
+      for(let i = 0; i < this.currentBoard.decks.length; i++){
+        const deck = this.currentBoard.decks[i]
+        deck.notes = deck.notes.filter(n => n.id !== note.id)
+      }
+
+      await this.updateCurrentBoard()
+    }
+    catch(error){
+      if(error instanceof Error){
+        console.log(error.message)
+      }
+    }
   }
 
   async updateCurrentBoard(): Promise<void> {

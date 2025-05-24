@@ -1,4 +1,8 @@
-<div class="min-width-[200px] mr-[1pem] p-2 border-black border-2">
+<div 
+    class="min-width-[200px] mr-[1pem] p-2 border-black border-2"
+    (contextmenu)="onContextMenu($event)"
+>
+
     <p class="w-full text-center font-medium">{{deck.name}}</p>
     <div
         class="min-h-32"
@@ -12,7 +16,6 @@
             <note 
                 [note]="note" 
                 cdkDrag 
-                (delete)="handleDelete($event)"
             />
         }
     </div>
@@ -22,6 +25,21 @@
         >Add note</button>
     </div>
 </div>
+
+
+<div
+    style="visibility: hidden; position: absolute"
+    [style.left]="menuPosition.x"
+    [style.top]="menuPosition.y"
+    [matMenuTriggerFor]="contextMenu"
+></div>
+
+<mat-menu #contextMenu="matMenu">
+    <ng-template matMenuContent>
+        <p>DECK</p>
+        <button mat-menu-item (click)="removeDeck()">Delete</button>
+    </ng-template>
+</mat-menu>
 
         <!-- cdkDropList 
         [id]="deck.id"

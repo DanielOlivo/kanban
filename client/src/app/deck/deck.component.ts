@@ -1,7 +1,9 @@
 import { v4 as uuid } from 'uuid'
-import { Component, ElementRef, inject, Input, QueryList, ViewChildren } from '@angular/core';
+import { Component, ElementRef, inject, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NoteComponent } from '../note/note.component';
 import { MatCardModule } from '@angular/material/card';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -15,7 +17,10 @@ import { StateService } from '../state.service';
 
 @Component({
   selector: 'deck',
-  imports: [NoteComponent, MatCardModule, CdkDropList, CdkDrag ],
+  imports: [
+    NoteComponent, MatCardModule, CdkDropList, CdkDrag,
+    MatMenuModule
+  ],
   templateUrl: './deck.component.html',
   styleUrl: './deck.component.css'
 })
@@ -38,24 +43,15 @@ export class DeckComponent {
     this.service.updateCurrentBoard()
   }
 
-  handleDelete(note: Note){
-    this.service.removeNote(this.deck, note.id)
-  }
+  // handleDelete(note: Note){
+  //   this.service.removeNote(this.deck, note.id)
+  // }
 
   textareas: number[] = []
   @ViewChildren('noteTextArea') noteAreaRefs!: QueryList<ElementRef>
 
-  addNewNote(){
-    // this.service.addNote(this.deck)
-    this.textareas.push(this.textareas.length)
-    
-
-    const note: Note = {
-      id: uuid(),
-      title: 'new note',
-      content: ''
-    }
-    this.deck.notes.push(note)
+  async addNewNote(){
+    await this.service.addNote(this.deck)
 
     setTimeout(() => {
       const last = this.noteAreaRefs.last;
@@ -63,5 +59,21 @@ export class DeckComponent {
     }, 100)
 
     // notify service
+  }
+
+  @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger
+  menuPosition = { x: '0', y: '0'}
+
+  onContextMenu(event: MouseEvent){
+    event.preventDefault() 
+    // event.stopPropagation()
+    this.menuPosition.x = event.clientX + 'px'
+    this.menuPosition.y = event.clientY + 'px'
+    this.contextMenu.openMenu()
+  }
+
+  removeDeck(){
+    // console.log('DELETE ME') 
+    this.service.removeDeck(this.deck)
   }
 }

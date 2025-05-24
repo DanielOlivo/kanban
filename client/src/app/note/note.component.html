@@ -1,6 +1,6 @@
 <div
     (dblclick)="setEditable()"
-    (contextmenu)="openMenu($event, note)"
+    (contextmenu)="onContextMenu($event)"
 >
     <textarea 
         #noteTextArea
@@ -8,16 +8,23 @@
         [style]="style"
         [(ngModel)]="note.title"
         [disabled]="!onEdit"
-        (blur)="applyChanges()" 
+        (blur)="state.updateCurrentBoard()" 
     ></textarea>
 
-    <note-menu 
-        *ngIf="menuOpen"
-        [x]="menuX"
-        [y]="menuY"
-        [note]="note"
-        (close)="menuOpen=false"
-        (delete)="onDelete()"
-    ></note-menu>
-
 </div>
+
+<div
+    style="visibility: hidden; position: absolute"
+    [style.left]="menuPosition.x"
+    [style.top]="menuPosition.y"
+    [matMenuTriggerFor]="noteMenu"
+></div>
+
+<mat-menu #noteMenu="matMenu">
+    <ng-template matMenuContent>
+        <p>NOTE:</p>
+        <button mat-menu-item (click)="remove()">Delete</button>
+    </ng-template>
+</mat-menu>
+
+    <!-- [matMenuTriggerFor]="noteMenu" -->
