@@ -52,10 +52,16 @@ export class StateService {
   boardList: BoardItem[]
 
   constructor() {
-    const username = localStorage.getItem('username')
-    const token = localStorage.getItem('token')
+    let username = '' 
+    let token = '' 
 
-    if(username && username.length > 0 && token && token.length > 0){
+    if(typeof window !== 'undefined'){
+      const myStorage = window.localStorage
+      username = myStorage.getItem('username') || ''
+      token = myStorage.getItem('token') || ''
+    }
+
+    if(username.length > 0 && token.length > 0){
       this.username = username
       this.token = token
       this.axiosInstance = axios.create({
@@ -137,6 +143,20 @@ export class StateService {
     }
   }
 
+  async removeBoard(item: BoardItem){
+    try{
+      console.log('requesting removal of ', item)
+      const res = await this.axiosInstance.delete(`/board/${item.id}`)
+
+      this.boardList = this.boardList.filter(i => i.id !== item.id) 
+    }
+    catch(error){
+      if(error instanceof Error)
+        console.log(error)
+    }
+
+  }
+
   async updateCurrentBoard(): Promise<void> {
     try{
       const res = await this.axiosInstance.put(`/board/${this.currentBoard!.id}`, this.currentBoard)
@@ -163,12 +183,32 @@ export class StateService {
         }
       })
 
-      localStorage.setItem('username', this.username)
-      localStorage.setItem('token', this.token)
+      if(typeof window !== 'undefined'){
+        const myStorage = window.localStorage
+        myStorage.setItem('username', this.username)
+        myStorage.setItem('token', this.token)
+      }
     }
     catch(error){
       if(error instanceof Error)
         console.log(error.message)
     }
+  }
+
+  async signout(){
+    try{
+      const res = await this.axiosInstance.delete('/')
+
+      this.username = ''
+      this.token = ''
+
+      localStorage.clear()
+    }
+    catch(error){
+      if(error instanceof Error)
+        console.log(error.message)
+    }
+
+
   }
 }

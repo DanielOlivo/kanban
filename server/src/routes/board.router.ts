@@ -97,10 +97,14 @@ boardsRouter.delete('/:id', async(req: Request, res: Response) => {
     const id = req?.params?.id
 
     try{
-        const query = { _id: new ObjectId(id) }
+        const query = { 
+            _id: new ObjectId(id),
+            ownerId: req.token.id
+        }
+
         const result = await collections.boards?.deleteOne(query)
 
-        if(result && result.deletedCount){
+        if(result && result.deletedCount === 1){
             res.status(202).send('successfully removed')
         }
         else if(!result){

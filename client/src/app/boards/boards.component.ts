@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import { StateService } from '../state.service';
@@ -6,10 +6,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu'
+import { BoardItem } from '../board';
 
 @Component({
   selector: 'boards',
-  imports: [RouterLink, MatListModule, MatToolbarModule, MatButtonModule, MatIconModule, MatSidenavModule],
+  imports: [  RouterLink, MatListModule, MatToolbarModule,
+              MatButtonModule, MatIconModule, MatSidenavModule,
+              MatMenuModule ],
   templateUrl: './boards.component.html',
   styleUrl: './boards.component.css'
 })
@@ -27,5 +31,23 @@ export class BoardsComponent {
     setTimeout(() => {
       this.state.fetchList()
     }, 200)
+  }
+
+  @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger
+  menuPosition = { x: '0', y: '0'}
+
+  onContextMenu(event: MouseEvent, item: BoardItem){
+    event.preventDefault()
+    console.log('onContextMenu: ', item, "event", event, 'contextMenu', this.contextMenu)
+    this.menuPosition.x = event.clientX + 'px'
+    this.menuPosition.y = event.clientY + 'px'
+    this.contextMenu.menuData = {'item': item}
+    // this.contextMenu.menu?.focusFirstItem('mouse')
+    this.contextMenu.openMenu()
+  }
+
+  onDeleteClick(item: BoardItem){
+    // console.log('to delete', item)
+    this.state.removeBoard(item)
   }
 }
