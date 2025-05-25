@@ -258,6 +258,16 @@ export class StateService {
     }
   }
 
+  async signup(credentials: Credentials): Promise<void> {
+    try{
+      await this.axiosInstance.post('/signup', credentials)
+    }
+    catch(error){
+      if(error instanceof Error)
+        console.log(error.message)
+    }
+  }
+
   async signin(credentials: Credentials): Promise<void> {
     try {
       const res = await this.axiosInstance.post('/signin', credentials)
@@ -287,9 +297,13 @@ export class StateService {
   async signout(){
     console.log('signing out...')
     try{
-      const res = await axios.delete('/',{
+      // const res = await this.axiosInstance.delete('/')
+      const url = new URL(baseUrl).href
+      console.log('gonna send request: ', url)
+      const res = await axios.delete(url, {
         headers: { Authorization: `Bearer ${this.token}`}
       })
+      console.log('...sent')
 
       this.username = ''
       this.token = ''

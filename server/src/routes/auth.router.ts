@@ -74,7 +74,10 @@ authRouter.post('/signin', async (req: Request, res: Response) => {
 authRouter.delete('/', [authenticate],  async (req: Request, res: Response) => {
     // add token to black list
     try{
-        res.redirect('/signin')
+        console.log('singing out...')
+        // res.redirect('/signin')
+        res.sendStatus(200)
+        console.log('...signed out')
         // res.sendStatus(201)
     }
     catch(error){
@@ -82,9 +85,16 @@ authRouter.delete('/', [authenticate],  async (req: Request, res: Response) => {
     }
 })
 
+// authRouter.delete('*', (req: Request, res: Response) => {
+//     console.log('I have got delete request')
+//     res.sendStatus(200)
+// })
 
-authRouter.use('/static', express.static(path.join(__dirname, '../../../client/dist/client/browser')))
+const relPath = '../../../client/dist/client'
+
+authRouter.use(express.static(path.join(__dirname, relPath)))
+
 authRouter.get('*', (req: Request, res: Response) => {
     console.log('returning html...')
-    res.sendFile(path.join(__dirname, '../../../client/dist/client/browser', 'index.csr.html'))
+    res.sendFile(path.join(__dirname, relPath, 'index.html'))
 })

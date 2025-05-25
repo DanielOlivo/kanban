@@ -1,1 +1,23 @@
-<p>sign-up-form works!</p>
+<div class="flex flex-col justify-start items-center">
+
+    <h1 class="text-4xl font-semibold">Sign Up</h1>
+
+    <form 
+        [formGroup]="form" 
+        class="flex flex-col justify-start mt-9"
+        (ngSubmit)="submit()"
+    >
+
+        <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input type="text" matInput formControlName="username" /> 
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>password</mat-label>
+            <input type="password" matInput formControlName="password" /> 
+        </mat-form-field>
+
+        <button mat-flat-button type="submit">Sign in</button>
+    </form>
+</div>
