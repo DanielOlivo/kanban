@@ -7,6 +7,7 @@ import { createHash, validatePassword } from '../utils/hash'
 import { generateToken } from '../utils/token'
 import { authenticate } from '../middlewares/authenticate'
 import { TokenPayload } from '../models/tokenPayload'
+import path from 'path'
 
 export const authRouter = express.Router()
 authRouter.use(express.json())
@@ -79,4 +80,11 @@ authRouter.delete('/', [authenticate],  async (req: Request, res: Response) => {
     catch(error){
         res.status(500).send(error instanceof Error ? error.message : 'unknown')
     }
+})
+
+
+authRouter.use('/static', express.static(path.join(__dirname, '../../../client/dist/client/browser')))
+authRouter.get('*', (req: Request, res: Response) => {
+    console.log('returning html...')
+    res.sendFile(path.join(__dirname, '../../../client/dist/client/browser', 'index.csr.html'))
 })

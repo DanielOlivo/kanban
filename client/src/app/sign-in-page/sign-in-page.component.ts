@@ -5,7 +5,7 @@ import { SigninFormComponent } from "../signin-form/signin-form.component";
 @Component({
   selector: 'sign-in-page',
   standalone: true,
-  imports: [FrontPageLayoutComponent, SigninFormComponent],
+  imports: [SigninFormComponent],
   templateUrl: './sign-in-page.component.html',
   styleUrl: './sign-in-page.component.css'
 })

@@ -16,7 +16,7 @@ export interface CreateBoardDialog {
     MatInputModule,
     FormsModule,
     MatButtonModule,
-    MatDialogTitle,
+    // MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
     MatDialogClose

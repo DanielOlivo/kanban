@@ -25,7 +25,7 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
             ],
             "styles": [
               "@angular/material/prebuilt-themes/rose-red.css",
@@ -37,15 +37,20 @@
             "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "allowedCommonJsDependencies": [
+              "form-data",
+              "proxy-from-env",
+              "follow-redirects"
+            ]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",

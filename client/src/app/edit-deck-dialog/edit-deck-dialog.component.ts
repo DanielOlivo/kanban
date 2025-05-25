@@ -17,10 +17,10 @@ export interface EditDeckDialog {
     MatInputModule,
     FormsModule,
     MatButtonModule,
-    MatDialogTitle,
+    // MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose
+    // MatDialogClose
   ],
   templateUrl: './edit-deck-dialog.component.html',
   styleUrl: './edit-deck-dialog.component.css'
