@@ -16,12 +16,13 @@ import type { Note } from '../note';
 import { StateService } from '../state.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDeckDialogComponent } from '../edit-deck-dialog/edit-deck-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'deck',
   imports: [
     NoteComponent, MatCardModule, CdkDropList, CdkDrag,
-    MatMenuModule
+    MatMenuModule, MatButtonModule
   ],
   templateUrl: './deck.component.html',
   styleUrls: ['./deck.component.css']

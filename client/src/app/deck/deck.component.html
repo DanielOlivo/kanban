@@ -1,5 +1,5 @@
 <div 
-    class="width-[200px] mr-[1pem] p-2 border-black border-2"
+    class="width-[200px] mr-[1pem] p-2 bg-green-300 rounded-2xl"
     (contextmenu)="onContextMenu($event)"
 >
 
@@ -19,8 +19,8 @@
             />
         }
     </div>
-    <div class="add-note-container">
-        <button mat-stroked-button
+    <div class="w-full flex justify-center items-center">
+        <button mat-stroked-button mat-button
             (click)="addNewNote()"  
         >Add note</button>
     </div>
